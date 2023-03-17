@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!DOCTYPE html>
+<html>
+<head>
+	<title>Vote for your favorite artist</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			font-size: 16px;
+			line-height: 1.5;
+			margin: 0;
+			padding: 0;
+			background-color: #f1f1f1;
+		}
+		.container {
+			max-width: 960px;
+			margin: 0 auto;
+			padding: 40px;
+			background-color: #fff;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			border-radius: 5px;
+			text-align: center;
+		}
+		h1 {
+			font-size: 36px;
+			font-weight: bold;
+			margin-bottom: 40px;
+		}
+		form {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: center;
+			margin-bottom: 40px;
+		}
+		label {
+			display: block;
+			margin-right: 20px;
+			margin-bottom: 20px;
+			font-size: 24px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+		input[type="radio"] {
+			display: none;
+		}
+		input[type="submit"] {
+			display: block;
+			margin: 0 auto;
+			padding: 10px 20px;
+			background-color: #333;
+			color: #fff;
+			border: none;
+			border-radius: 5px;
+			font-size: 18px;
+			cursor: pointer;
+		}
+		p.message {
+			font-weight: bold;
+			margin-bottom: 20px;
+		}
+		.results {
+			margin-top: 40px;
+			font-size: 24px;
+			font-weight: bold;
+		}
+		.results li {
+			list-style: none;
+			margin-bottom: 10px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		.results li span {
+			margin-left: 20px;
+			font-weight: normal;
+			color: #333;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Kush do ta fitoje bbvk?</h1>
+		<form id="voting-form">
+			<label>
+				<input type="radio" name="artist" value="1">
+				Stresi
+			</label>
+			<label>
+				<input type="radio" name="artist" value="2">
+				Xhuli
+			</label>
+			<label>
+				<input type="radio" name="artist" value="3">
+				Vedati
+			</label>
+			<label>
+				<input type="radio" name="artist" value="4">
+				Artani
+			</label>
+			<label>
+				<input type="radio" name="artist" value="5">
+				Gresa
+			</label>
+			<input type="submit" value="Voto">
+		</form>
+		<p class="message" id="message"></p>
+		<ul class="results" id="results">
+			<li><span>Stresi:</span> <span id="votes-1">0</span></li>
+					<li><span>Xhuli:</span> <span id="votes-2">0</span></li>
+		<li><span>Vedati:</span> <span id="votes-3">0</span></li>
+		<li><span>Artani:</span> <span id="votes-4">0</span></li>
+		<li><span>Gresa:</span> <span id="votes-5">0</span></li>
+		<li><span>Total:</span> <span id="total-votes">0</span></li>
+	</ul>
+</div>
+
+<script>
+	// check if the user has already voted
+	if (localStorage.getItem('voted') === 'true') {
+		disableForm();
+		showMessage('Ju keni votuar tashmë.');
+	}
+
+	// add event listener to the form submit button
+	document.getElementById('voting-form').addEventListener('submit', function(event) {
+		event.preventDefault();
+		var selectedArtist = document.querySelector('input[name="artist"]:checked');
+
+		if (selectedArtist) {
+			// get the current votes from local storage
+			var votes = JSON.parse(localStorage.getItem('votes')) || {};
+
+			// add the user's vote to the vote count for the selected artist
+			votes[selectedArtist.value] = (votes[selectedArtist.value] || 0) + 1;
+
+			// update the local storage with the new vote count
+			localStorage.setItem('votes', JSON.stringify(votes));
+
+			// update the vote count on the page
+			updateVoteCount(selectedArtist.value);
+
+			// disable the form and show a success message
+			disableForm();
+			showMessage('Faleminderit për votën tuaj!');
+
+			// set a flag in local storage to indicate that the user has voted
+			localStorage.setItem('voted', 'true');
+		} else {
+			// show an error message if no artist is selected
+			showMessage('Ju lutemi zgjidhni një artist për të votuar.');
+		}
+	});
+
+	// update the vote count on the page
+	function updateVoteCount(artistId) {
+		var votes = JSON.parse(localStorage.getItem('votes')) || {};
+		var totalVotes = 0;
+
+		// update the vote count for the selected artist
+		document.getElementById('votes-' + artistId).textContent = votes[artistId] || 0;
+
+		// calculate the total number of votes
+		Object.keys(votes).forEach(function(key) {
+			totalVotes += votes[key];
+		});
+
+		// update the total vote count
+		document.getElementById('total-votes').textContent = totalVotes;
+	}
+
+	// disable the form and show a message
+	function disableForm() {
+		document.getElementById('voting-form').reset();
+		document.querySelectorAll('input[type="radio"]').forEach(function(radio) {
+			radio.disabled = true;
+		});
+		document.querySelector('input[type="submit"]').disabled = true;
+	}
+
+	// show a message on the page
+	function showMessage(message) {
+		document.getElementById('message').textContent = message;
+	}
+
+	// call updateVoteCount to display the initial vote count
+	updateVoteCount(1);
+	updateVoteCount(2);
+	updateVoteCount(3);
+	updateVoteCount(4);
+	updateVoteCount(5);
+</script>
+</body>
+</html>
